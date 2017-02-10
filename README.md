@@ -10,8 +10,22 @@ Node's `process.env` can only store strings, so if using the `castVars()` functi
 - Run projects outside of the project path, and still have dotenv pick up the `.env` file local to the project source.
 - Returns an object with the newly casted environment variables for you to write to local or global variable.
 - Read the values of the `.env` file, and automatically cast them as boolean, numeric, or objects.
-- Option to disable casting of specific primative types.
+- Option to disable casting of specific primitive types.
 - Option to skip casting by ending string with a special character. By default, `*`.
+- Only use the tools you want.
+
+Examples of running from command line using alternate dotenv file:
+```bash
+# Single execution defining dotenv file via command line argument
+node myapp.js --config=.env_alternate
+
+# Single execution defining dotenv file via environment variable:
+DOTENV_CONFIG=.env_alternate node myapp.js
+
+# Define dotenv file once via environment variable, and have it persist for the duration of your session:
+export DOTENV_CONFIG=.env_alternate
+node myapp.js
+```
 
 Example .env with castable variables:
 ```dosini
@@ -79,35 +93,30 @@ var env = GLOBAL.env = dotEnvTools.castVars();
 
 Config options, and their defaults:
 ```javascript
-  // Debug casting
-  debugCasting: false
-  // Default file name
-  envFileName: '.env'
-  // Default environment variable to look for to override default file name
-  configKeyEnv: 'DOTENV_CONFIG'
-  // Default command line argument to look for to override default file name
-  configKeyArg: 'config'
-  // Default command line argument to look for to override default file name
-  passthroughChar: '*'
-  // By default, exit if the .env file is not found
-  requireFile: true
-  // By default, try casting strings to numbers
-  castNumbers: true
-  // By default, try casting strings to booleans
-  castBooleans: true
-  // By default, try casting JSON strings to objects. Failure to cast, value remains sting
-  castJson: true
-```
+// Debug casting
+debugCasting: false
 
-Examples of running from command line using alternate dotenv file:
-```bash
-# Single execution defining dotenv file via command line argument
-node myapp.js --config=.env_alternate
+// Default file name
+envFileName: '.env'
 
-# Single execution defining dotenv file via environment variable:
-DOTENV_CONFIG=.env_alternate node myapp.js
+// Environment variable to look for to override default file name
+configKeyEnv: 'DOTENV_CONFIG'
 
-# Define dotenv file once via environment variable, and have it persist for the duration of your session:
-export DOTENV_CONFIG=.env_alternate
-node myapp.js
+// Command line argument to look for to override default file name
+configKeyArg: 'config'
+
+// Character to look for, signaling to skip cast attempt
+passthroughChar: '*'
+
+// Exit if the .env file is not found
+requireFile: true
+
+// Try casting strings to numbers
+castNumbers: true
+
+// Try casting strings to booleans
+castBooleans: true
+
+// Try casting JSON strings to objects. Failure to cast, value remains sting
+castJson: true
 ```
