@@ -2,14 +2,24 @@ var path = require('path');
 var fs = require('fs');
 
 var cfg = {
+	// Debug casting
+	debugCasting: false,
 	// Default file name
 	envFileName: '.env',
 	// Default environment variable to look for to override default file name
 	configKeyEnv: 'DOTENV_CONFIG',
 	// Default command line argument to look for to override default file name
 	configKeyArg: 'config',
+	// Default command line argument to look for to override default file name
+	passthroughChar: '*',
 	// By default, exit if the .env file is not found
 	requireFile: true,
+	// By default, try casting strings to numbers
+	castNumbers: true,
+	// By default, try casting strings to booleans
+	castBooleans: true,
+	// By default, try casting JSON strings to objects. Failure to cast, value remains sting
+	castJson: true,
 };
 
 function config (cfgIn) {
@@ -62,12 +72,41 @@ function castVars () {
 
 	// Cast values as numbers or booleans if they look as such to make them easier to work with
 	Object.keys(env).forEach(function (key) {
-		if (!isNaN(env[key])) {
+		if (env[key].substr(-1) == cfg.passthroughChar) {
+			env[key] = env[key].substr(0, env[key].length-1);
+			if (cfg.debugCasting) {
+				console.log(key, 'remains string, flagged for pass through');
+			}
+		} else if (cfg.castNumbers && !isNaN(env[key])) {
 			env[key] *= 1;
-		} else if (env[key].toLowerCase() === 'true') {
+			if (cfg.debugCasting) {
+				console.log(key, 'was casted numeric');
+			}
+		} else if (cfg.castBooleans && env[key].toLowerCase() === 'true') {
 			env[key] = true;
-		} else if (env[key].toLowerCase() === 'false') {
+			if (cfg.debugCasting) {
+				console.log(key, 'was casted boolean');
+			}
+		} else if (cfg.castBooleans && env[key].toLowerCase() === 'false') {
+			if (cfg.debugCasting) {
+				console.log(key, 'was casted boolean');
+			}
 			env[key] = false;
+		} else if (cfg.castJson) {
+			try {
+				env[key] = JSON.parse(env[key]);
+				if (cfg.debugCasting) {
+					console.log(key, 'was casted object');
+				}
+			} catch (e) {
+				if (cfg.debugCasting) {
+					console.log(key, 'remains string, casting JSON string to object failed');
+				}
+			}
+		} else {
+			if (cfg.debugCasting) {
+				console.log(key, 'remains string, miss');
+			}
 		}
 	});
 
