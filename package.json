@@ -1,6 +1,6 @@
 {
   "name": "dotenv-tools",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Tools to improve use of dotenv. Configure .env path, cast variables to primatives, and decode JSON",
   "main": "index.js",
   "scripts": {
