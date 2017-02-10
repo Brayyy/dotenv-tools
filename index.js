@@ -23,7 +23,7 @@ var cfg = {
 };
 
 function config (cfgIn) {
-	var cfgIn = cfgIn || {};
+	cfgIn = cfgIn || {};
 	Object.keys(cfgIn).forEach(function (key) {
 		cfg[key] = cfgIn[key];
 	});
@@ -46,14 +46,14 @@ function getPath () {
 	});
 
 	// Add the local path as long as the file is not an absolute path starting with "/"
-	if (envPath.substr(0,1) !== '/') {
+	if (envPath.substr(0, 1) !== '/') {
 		var dirname = path.dirname(module.parent.filename);
-		envPath = path.join(dirname, envPath)
+		envPath = path.join(dirname, envPath);
 	}
 
 	// Exit the process if the .env file can not be found
 	if (cfg.requireFile && !fs.existsSync(envPath)) {
-		console.error('Could not open dotenv file at: ' + envPath)
+		console.error('Could not open dotenv file at: ' + envPath);
 		process.exit();
 	}
 
@@ -72,8 +72,8 @@ function castVars () {
 
 	// Cast values as numbers or booleans if they look as such to make them easier to work with
 	Object.keys(env).forEach(function (key) {
-		if (env[key].substr(-1) == cfg.passthroughChar) {
-			env[key] = env[key].substr(0, env[key].length-1);
+		if (env[key].substr(-1) === cfg.passthroughChar) {
+			env[key] = env[key].substr(0, env[key].length - 1);
 			if (cfg.debugCasting) {
 				console.log(key, 'remains string, flagged for pass through');
 			}
@@ -103,10 +103,8 @@ function castVars () {
 					console.log(key, 'remains string, casting JSON string to object failed');
 				}
 			}
-		} else {
-			if (cfg.debugCasting) {
-				console.log(key, 'remains string, miss');
-			}
+		} else if (cfg.debugCasting) {
+			console.log(key, 'remains string, miss');
 		}
 	});
 
@@ -118,4 +116,4 @@ module.exports = {
 	getPath: getPath,
 	getDotEnvConfig: getDotEnvConfig,
 	castVars: castVars,
-}
+};
